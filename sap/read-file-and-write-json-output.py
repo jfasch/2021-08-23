@@ -5,6 +5,9 @@ import json
 my_records_for_json = []
 
 for r in sap.read_sap_file(sys.argv[1]):
+    # argh. read_sap_file() produces record with datetime.datetime
+    # objects (we_datum), but json cannot handle those. convert them
+    # back to strings where they came from originally.
     rec = {
         'material': r.material,
         'werk': r.werk,
