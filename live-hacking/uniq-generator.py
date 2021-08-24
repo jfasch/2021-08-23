@@ -1,13 +1,10 @@
 def uniq(input):
-    output = []
     have = set()
     for element in input:
         if not element in have:
             print(element, 'nicht vorhanden')
-            output.append(element)
+            yield element
             have.add(element)
-
-    return output
 
 input_list = [2, 3, 1, 10, 3, 3, 1, 10, 5, 2]
 
