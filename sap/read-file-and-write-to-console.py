@@ -1,7 +1,7 @@
 import sys
 import pprint
 
-import sap
+from . import sap
 
 
 records = sap.read_sap_file(sys.argv[1])

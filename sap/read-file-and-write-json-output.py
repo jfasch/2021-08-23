@@ -25,4 +25,6 @@ for r in sap.read_sap_file(sys.argv[1]):
     }
     my_records_for_json.append(rec)
 
-print(json.dumps(my_records_for_json))
+# create a string in JSON format, and print it out
+json_text = json.dumps(my_records_for_json)
+print(json_text)
