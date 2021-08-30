@@ -4,24 +4,43 @@ import datetime
 import time
 import random
 import uuid
+from collections import namedtuple
 
+
+Message = namedtuple('Message', ('msgid', 'timestamp', 'message'))
+def make_message(text):
+    return Message(message=text, msgid=uuid.uuid4().fields, timestamp=time.time())
+
+class MQTTBrokerClient:
+    def __init__(self, host, port, topic):
+        self.client = client.Client()
+        self.client.connect(host, port)
+        self.topic = topic
+    def send_message(self, message):
+        msg = {'message': message.message,
+               'msgid': message.msgid,
+               'timestamp': message.timestamp }
+        self.client.publish(self.topic, json.dumps(msg))
+
+# class UPCUABrokerClient:
+#     def __init__(self, blah):
+#         self.blah = blah
+#     def send_message(self, msgid, message):
+#         # ...
 
 class ErrorHandler:
-    def __init__(self, mqtt, topic):
+    def __init__(self, brokerclient):
         self.log = []
-        self.sequence = 0
-        self.mqtt = mqtt
-        self.topic = topic
+        self.brokerclient = brokerclient
     def shit_happened(self, shit):
-        msg = {'shit': shit,
-               'msgid': uuid.uuid4().fields }
-        self.log.append(msg)
-        self.mqtt.publish(self.topic, json.dumps(msg))
+        m = make_message(shit)
+        self.log.append(m)
+        self.brokerclient.send_message(m)
 
-c = client.Client()
-c.connect('localhost')
+c = MQTTBrokerClient('localhost', 1883, '/spsen/meine-sps')
+# c = UPCUABrokerClient('blah')
 
-errorhandler = ErrorHandler(c, '/spsen/meine-sps')
+errorhandler = ErrorHandler(c)
 
 while True:
     bullshit = 'bullshit ' + str(random.randrange(1000))
